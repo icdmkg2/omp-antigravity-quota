@@ -2,6 +2,9 @@
  * Check for and install updates.
  */
 
+import { spawnSync } from "node:child_process";
+import * as os from "node:os";
+import * as path from "node:path";
 import { Command, Flags } from "@oh-my-pi/pi-utils/cli";
 import { updateHelp as commandHelp } from "../cli/command-help";
 import * as pluginCli from "../cli/plugin-cli";
@@ -38,6 +41,12 @@ export default class Update extends Command {
 				check: flags.check,
 				channel: flags.canary ? "canary" : flags.stable ? "stable" : undefined,
 			});
+			if (!flags.check) {
+				try {
+					const patchScript = path.join(os.homedir(), ".omp/agent/patch-antigravity.ts");
+					spawnSync("bun", [patchScript], { stdio: "inherit" });
+				} catch {}
+			}
 		}
 	}
 }

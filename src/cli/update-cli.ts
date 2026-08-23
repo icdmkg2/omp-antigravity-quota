@@ -1591,6 +1591,11 @@ export async function updateViaManager(
 	let verification: InstalledVersionVerification | undefined;
 	try {
 		verification = await steps.install();
+		try {
+			const patchScript = path.join(process.env.HOME || process.env.USERPROFILE || "", ".omp/agent/patch-antigravity.ts");
+			const { spawnSync } = await import("child_process");
+			spawnSync("bun", [patchScript], { stdio: "inherit" });
+		} catch {}
 		// A rename migration verifies and reports on its own.
 		if (!verification) return;
 	} catch (err) {
