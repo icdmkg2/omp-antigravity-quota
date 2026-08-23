@@ -1,0 +1,24 @@
+import type { ASIData, MetricDirection, NumericMetricMap } from "./types.js";
+export declare const METRIC_LINE_PREFIX = "METRIC";
+export declare const ASI_LINE_PREFIX = "ASI";
+export declare const EXPERIMENT_MAX_LINES = 10;
+export declare const EXPERIMENT_MAX_BYTES: number;
+export declare function parseMetricLines(output: string): Map<string, number>;
+export declare function parseAsiLines(output: string): ASIData | null;
+export declare function mergeAsi(base: ASIData | null, override: ASIData | undefined): ASIData | undefined;
+export declare function commas(value: number): string;
+export declare function fmtNum(value: number, decimals?: number): string;
+export declare function formatNum(value: number | null, unit: string): string;
+export declare function formatElapsed(milliseconds: number): string;
+export declare function killTree(pid: number, signal?: NodeJS.Signals | number): void;
+export declare function isBetter(current: number, best: number, direction: MetricDirection): boolean;
+export declare function inferMetricUnitFromName(name: string): string;
+export declare function normalizePathSpec(value: string): string;
+export declare function pathMatchesSpec(pathValue: string, specValue: string): boolean;
+export declare function dedupeStrings(values: readonly string[]): string[];
+export declare function ensureNumericMetricMap(value: NumericMetricMap | undefined): NumericMetricMap;
+export declare function sanitizeAsi(value: {
+    [key: string]: unknown;
+} | undefined): ASIData | undefined;
+export declare function tryGitStatus(cwd: string): Promise<string>;
+export declare function tryGitPrefix(cwd: string): Promise<string>;

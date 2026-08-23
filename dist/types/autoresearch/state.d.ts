@@ -1,0 +1,17 @@
+import type { SessionEntry } from "../session/session-entries.js";
+import type { RunRow, SessionRow } from "./storage.js";
+import type { AutoresearchRuntime, ExperimentResult, ExperimentState, MetricDef, MetricDirection, NumericMetricMap, ReconstructedControlState, RuntimeStore } from "./types.js";
+export declare function createExperimentState(): ExperimentState;
+export declare function createSessionRuntime(): AutoresearchRuntime;
+export declare function cloneExperimentState(state: ExperimentState): ExperimentState;
+export declare function currentResults(results: ExperimentResult[], segment: number): ExperimentResult[];
+export declare function findBaselineResult(results: ExperimentResult[], segment: number): ExperimentResult | null;
+export declare function findBaselineMetric(results: ExperimentResult[], segment: number): number | null;
+export declare function findBestKeptMetric(results: ExperimentResult[], segment: number, direction: MetricDirection): number | null;
+export declare function findBaselineRunNumber(results: ExperimentResult[], segment: number): number | null;
+export declare function findBaselineSecondary(results: ExperimentResult[], segment: number, knownMetrics: MetricDef[]): NumericMetricMap;
+export declare function sortedMedian(values: number[]): number;
+export declare function computeConfidence(results: ExperimentResult[], segment: number, direction: MetricDirection): number | null;
+export declare function buildExperimentState(session: SessionRow, loggedRuns: RunRow[]): ExperimentState;
+export declare function reconstructControlState(entries: SessionEntry[]): ReconstructedControlState;
+export declare function createRuntimeStore(): RuntimeStore;
