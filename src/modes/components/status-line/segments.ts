@@ -730,7 +730,7 @@ const antigravityQuotaSegment: StatusLineSegment = {
 		const q = ctx.antigravityQuota;
 		const prefix = theme.fg("statusLineModel", "Gemini");
 		if (!q || q.status === "unavailable" || (!q.shortWindow && !q.weekWindow)) {
-			return { content: `${prefix} quota: ${theme.fg("muted", "—")}`, visible: true };
+			return { content: "", visible: false };
 		}
 		const parts: string[] = [];
 		const includeReset = (ctx.width ?? 120) >= 90;
@@ -759,7 +759,7 @@ const antigravityQuotaSegment: StatusLineSegment = {
 			parts.push(`${q.weekWindow.label}:${pctText}${resetStr}`);
 		}
 		if (parts.length === 0) {
-			return { content: `${prefix} quota: ${theme.fg("muted", "—")}`, visible: true };
+			return { content: "", visible: false };
 		}
 		return { content: `${prefix} ${parts.join(theme.sep.dot)}`, visible: true };
 	},

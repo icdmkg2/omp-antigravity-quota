@@ -1,88 +1,35 @@
-# OMP with Live Google Antigravity Quota Status-Line
+# @oh-my-pi/pi-coding-agent
 
-This repository contains the complete `@oh-my-pi/pi-coding-agent` package modified with a native, real-time **`antigravity_quota`** status-line segment and 1-click automated installers for Windows, macOS, and Linux.
+Core implementation package for the `omp` coding agent in the `oh-my-pi` monorepo.
 
----
+For installation, setup, provider configuration, model roles, slash commands, and full CLI reference, see:
+- [Monorepo README (local)](../../README.md)
+- [Monorepo README (GitHub)](https://github.com/can1357/oh-my-pi#readme)
 
-## ⚡ 1-Click Instant Install
+Package-specific references:
+- [CHANGELOG](./CHANGELOG.md)
+- [MCP configuration guide](../../docs/mcp-config.md)
+- [MCP runtime lifecycle](../../docs/mcp-runtime-lifecycle.md)
+- [MCP server/tool authoring](../../docs/mcp-server-tool-authoring.md)
+- [DEVELOPMENT](./DEVELOPMENT.md)
 
-Clone the repository and run the installer for your system:
+## Memory backends
 
-### 🪟 Windows
-```powershell
-# In PowerShell:
-./install.ps1
+The agent supports three mutually-exclusive memory backends, selected via the `memory.backend` setting (Settings → Memory tab, or `~/.omp/config.yml`):
 
-# Or in Command Prompt:
-install.bat
+- `off` (default) — no memory subsystem runs.
+- `local` — existing rollout-summarisation pipeline; writes `memory_summary.md` and consolidated artifacts under the agent dir.
+- `hindsight` — talks to a [Hindsight](https://hindsight.vectorize.io) server (Cloud or self-hosted Docker), retains transcripts every Nth user turn, recalls memories on the first turn of a session, and exposes `retain`, `recall`, and `reflect`.
 
-# Or using Bun directly:
-bun install.ts
-```
+### Hindsight quickstart
 
-### 🍎 macOS & 🐧 Linux
-```bash
-./install.sh
+1. Run a Hindsight server (Cloud or `docker run -p 8888:8888 ghcr.io/vectorize-io/hindsight:latest`).
+2. Set `memory.backend = "hindsight"` and `hindsight.apiUrl = "http://localhost:8888"` (or your Cloud URL).
+3. Optional environment overrides (env wins over settings):
+   - `HINDSIGHT_API_URL`, `HINDSIGHT_API_TOKEN` — connection
+   - `HINDSIGHT_BANK_ID`, `HINDSIGHT_DYNAMIC_BANK_ID`, `HINDSIGHT_AGENT_NAME` — bank addressing
+   - `HINDSIGHT_AUTO_RECALL`, `HINDSIGHT_AUTO_RETAIN`, `HINDSIGHT_RETAIN_MODE` — lifecycle
+   - `HINDSIGHT_RECALL_BUDGET`, `HINDSIGHT_RECALL_MAX_TOKENS` — recall sizing
+   - `HINDSIGHT_BANK_MISSION`, `HINDSIGHT_DEBUG`
 
-# Or using Bun directly:
-bun install.ts
-```
-
-The installer will automatically:
-1. Patch your local OMP installation.
-2. Compile the standalone CLI bundle.
-3. Configure your status line in `~/.omp/agent/config.yml`.
-4. Install the auto-updater so future `omp update` runs automatically re-apply the feature.
-
----
-
-## 🌟 Feature Overview
-
-The `antigravity_quota` status-line segment displays your authenticated **Google Antigravity** subscription quotas in real-time right inside your OMP status bar:
-
-```text
-π · ⬢ gemini-3.7-flash · 📁 iot · ⑂ main · ◫ 12.0%/200K · $0.00 · Gemini 5h:41% (2h16m) · week:100%
-```
-
-### Key Highlights
-* **Remaining Percentages**: Shows real remaining capacity (e.g. `5h:41%` and `week:100%`) instead of used fractions.
-* **Smart Countdown**: Shows live reset countdowns (e.g. `(2h16m)`, `(3d)`) when terminal width permits ($\ge 90$ cols), and compacts them when width is constrained.
-* **Auto-Refresh**: Non-blocking 60-second background polling queries the Google Antigravity backend without stalling typing, tool calls, or streaming.
-* **Color Thresholds**: Muted above $25\%$, warning below $25\%$, and error below $10\%$ remaining.
-* **Graceful Degradation**: Shows `Gemini quota: —` when offline, unauthenticated, or on a non-Google provider.
-
----
-
-## 🔄 Self-Healing / What to do after running `omp update`
-
-`omp update` is hooked to automatically re-apply the patch in the background.
-
-If you ever need to manually re-apply or repair after a full package reinstall:
-```bash
-bun install.ts
-```
-
----
-
-## 🧪 Testing
-
-Run the included unit test suite:
-```bash
-bun test
-```
-All tests, including `src/modes/components/status-line/antigravity-quota.test.ts`, run via Bun's native test runner.
-
----
-
-## 📂 Project Structure
-
-* `install.ts` / `install.ps1` / `install.sh` / `install.bat` — 1-click cross-platform installer scripts.
-* `src/modes/components/status-line/`
-  * `segments.ts` — `antigravityQuotaSegment` renderer with remaining percentage and countdown calculation.
-  * `component.ts` — Background polling, 60s cache TTL, and `#normalizeAntigravityQuota`.
-  * `types.ts` — `AntigravityQuotaSnapshot` and `AntigravityQuotaWindow` data structures.
-  * `presets.ts` — Default and custom status line preset definitions.
-  * `antigravity-quota.test.ts` — Unit tests for the segment.
-* `src/config/settings-schema.ts` — `StatusLineSegmentId` schema and validation.
-* `patch-antigravity.ts` — Standalone updater/patcher script.
-* `dist/cli.js` — Compiled standalone executable bundle.
+Switching backends mid-session immediately replaces the live backend, memory tools, listeners, and system-prompt context. Existing users with `memories.enabled = true|false` are migrated to `memory.backend = "local"|"off"` exactly once on first launch; afterward, `memory.backend` is the sole runtime selector.

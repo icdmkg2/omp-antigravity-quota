@@ -283,7 +283,7 @@ if (!seg.includes("antigravity_quota")) {
 \t\tconst q = ctx.antigravityQuota;
 \t\tconst prefix = theme.fg("statusLineModel", "Gemini");
 \t\tif (!q || q.status === "unavailable" || (!q.shortWindow && !q.weekWindow)) {
-\t\t\treturn { content: \`\${prefix} quota: \${theme.fg("muted", "—")}\`, visible: true };
+\t\t\treturn { content: "", visible: false };
 \t\t}
 \t\tconst parts: string[] = [];
 \t\tconst includeReset = (ctx.width ?? 120) >= 90;
@@ -312,7 +312,7 @@ if (!seg.includes("antigravity_quota")) {
 \t\t\tparts.push(\`\${q.weekWindow.label}:\${pctText}\${resetStr}\`);
 \t\t}
 \t\tif (parts.length === 0) {
-\t\t\treturn { content: \`\${prefix} quota: \${theme.fg("muted", "—")}\`, visible: true };
+\t\t\treturn { content: "", visible: false };
 \t\t}
 \t\treturn { content: \`\${prefix} \${parts.join(theme.sep.dot)}\`, visible: true };
 \t},
